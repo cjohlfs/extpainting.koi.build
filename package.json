@@ -1,0 +1,8 @@
+{
+  "name": "koi-build-exterior-painting",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo done"
+  }
+}
