@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exterior Painting Estimator | KOI Build Co.</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      min-height: 100vh;
+    }
+    header {
+      background: #0a0a0a;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header img { height: 48px; }
+    header h1 { font-size: 1.4rem; font-weight: 600; letter-spacing: 0.5px; }
+    header p { font-size: 0.85rem; color: #aaa; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      color: #0a0a0a;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00c2a8;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #00c2a8;
+    }
+    .btn {
+      background: #00c2a8;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn:hover { background: #009e88; }
+    .result-box {
+      background: #f0fdfb;
+      border: 1px solid #00c2a8;
+      border-radius: 10px;
+      padding: 24px;
+      margin-top: 24px;
+      display: none;
+    }
+    .result-box h3 { color: #00c2a8; margin-bottom: 16px; font-size: 1.2rem; }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0f5f2;
+      font-size: 0.95rem;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row.total {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #0a0a0a;
+      margin-top: 8px;
+      border-top: 2px solid #00c2a8;
+      padding-top: 12px;
+    }
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #888;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>KOI Build Co.</h1>
+      <p>Exterior Painting Estimator</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Project Details</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Home Stories</label>
+          <select id="stories">
+            <option value="1">1 Story</option>
+            <option value="1.3">2 Stories</option>
+            <option value="1.6">3 Stories</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Total Exterior Sq Ft (walls)</label>
+          <input type="number" id="sqft" placeholder="e.g. 2000" />
+        </div>
+        <div class="form-group">
+          <label>Number of Windows</label>
+          <input type="number" id="windows" placeholder="e.g. 12" />
+        </div>
+        <div class="form-group">
+          <label>Number of Doors</label>
+          <input type="number" id="doors" placeholder="e.g. 3" />
+        </div>
+        <div class="form-group">
+          <label>Trim Linear Feet</label>
+          <input type="number" id="trim" placeholder="e.g. 300" />
+        </div>
+        <div class="form-group">
+          <label>Siding Type</label>
+          <select id="siding">
+            <option value="1">Lap / Horizontal</option>
+            <option value="1.1">Board &amp; Batten</option>
+            <option value="1.2">Shingle / Cedar</option>
+            <option value="1.3">Stucco</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condition / Prep</label>
+          <select id="condition">
+            <option value="1">Good (light cleaning)</option>
+            <option value="1.25">Fair (moderate prep)</option>
+            <option value="1.5">Poor (heavy prep/repairs)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Paint Quality</label>
+          <select id="quality">
+            <option value="1">Standard</option>
+            <option value="1.15">Premium</option>
+            <option value="1.3">Ultra Premium</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="calculate()">Calculate Estimate</button>
+
+      <div class="result-box" id="results">
+        <h3>Estimate Summary</h3>
+        <div class="result-row"><span>Labor (walls)</span><span id="r-labor"></span></div>
+        <div class="result-row"><span>Materials (paint)</span><span id="r-materials"></span></div>
+        <div class="result-row"><span>Windows &amp; Doors</span><span id="r-windows"></span></div>
+        <div class="result-row"><span>Trim</span><span id="r-trim"></span></div>
+        <div class="result-row"><span>Prep &amp; Condition Factor</span><span id="r-prep"></span></div>
+        <div class="result-row total"><span>Total Estimate</span><span id="r-total"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>&copy; 2025 KOI Build Co. &mdash; All rights reserved.</footer>
+
+  <script>
+    function fmt(n) {
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function calculate() {
+      const sqft = parseFloat(document.getElementById('sqft').value) || 0;
+      const windows = parseFloat(document.getElementById('windows').value) || 0;
+      const doors = parseFloat(document.getElementById('doors').value) || 0;
+      const trimLF = parseFloat(document.getElementById('trim').value) || 0;
+      const storyMult = parseFloat(document.getElementById('stories').value);
+      const sidingMult = parseFloat(document.getElementById('siding').value);
+      const condMult = parseFloat(document.getElementById('condition').value);
+      const qualMult = parseFloat(document.getElementById('quality').value);
+
+      const laborRate = 1.80; // per sqft base
+      const paintRate = 0.45; // per sqft
+      const windowCost = 65;
+      const doorCost = 90;
+      const trimRate = 1.20; // per LF
+
+      const labor = sqft * laborRate * storyMult * sidingMult;
+      const materials = sqft * paintRate * qualMult;
+      const windowsDoors = (windows * windowCost) + (doors * doorCost);
+      const trim = trimLF * trimRate;
+      const subtotal = (labor + materials + windowsDoors + trim);
+      const prep = subtotal * (condMult - 1);
+      const total = subtotal + prep;
+
+      document.getElementById('r-labor').textContent = fmt(labor);
+      document.getElementById('r-materials').textContent = fmt(materials);
+      document.getElementById('r-windows').textContent = fmt(windowsDoors);
+      document.getElementById('r-trim').textContent = fmt(trim);
+      document.getElementById('r-prep').textContent = fmt(prep);
+      document.getElementById('r-total').textContent = fmt(total);
+      document.getElementById('results').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
